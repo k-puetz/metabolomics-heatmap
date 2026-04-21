@@ -1,4 +1,4 @@
-#load libraries
+# Load libraries
 library(dplyr)
 library(readxl)
 library(ComplexHeatmap)
@@ -10,7 +10,7 @@ metabolomics <- suppressWarnings(read_excel('metabolomics.xlsx', sheet = 2))
 annotation_col <- read.csv( "sample_annotations.csv",
     stringsAsFactors = FALSE, check.names = FALSE)
 
-#Set column names
+# Set column names
 metabolomics <- metabolomics %>%
   mutate(Name_unique = make.unique(as.character(Name))) %>%
   tibble::column_to_rownames("Name_unique")
@@ -20,7 +20,7 @@ colnames(annotation_col)[1] = "SampleID"
 metabolomics_filtered_qc_na <- metabolomics %>%
   filter(`Group CV [%]: QC` <= 30)
 
-#Select columns with metabolomic measurements
+# Select columns with metabolomic measurements
 area_cols <- grep("^Area_", colnames(metabolomics_filtered_qc_na), value = TRUE)
 area_cols <- area_cols[!grepl("QC|Verd|Blank|zero", area_cols)]
 
@@ -31,7 +31,6 @@ mat_norm <- log10(mat_norm + 1)
 mat_scaled_qc_na_norm <- t(scale(t(mat_norm)))
 
 # Matching metadata to metabolomics
-
 colnames(mat_scaled_qc_na_norm) <- sub(".*-", "", colnames(mat_scaled_qc_na_norm))
 colnames(mat_scaled_qc_na_norm) <- sub("^0+", "", colnames(mat_scaled_qc_na_norm))
 
@@ -62,7 +61,7 @@ ann_colors <- list(
   "Dominant Family" = fam_colors
 )
 
-#Plot
+# Plot
 
 pdf("heatmap_metabolomics.pdf", width = 25, height = 20)
 
